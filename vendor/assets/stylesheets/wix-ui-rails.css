@@ -1,0 +1,5 @@
+/* Manifest of wix-ui-rails gem
+
+ *= require_self
+ *= require wix-ui/main
+ */
