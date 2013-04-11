@@ -3,9 +3,7 @@
 
 	var pluginName = 'Checkbox',
 
-    defaults = {
-        checked : false
-    };
+	defaults = {};
 
 	// The actual plugin constructor
 	function Plugin(element, options) {
@@ -14,14 +12,17 @@
 		this.init();
 	}
 
-    Plugin.prototype.init = function() {
+	Plugin.prototype.init = function() {
+        this._btnGroup = $(this.$el).children();
 
-        // Check the checkbox according to defaults or the value that was set by the user
-        this.options.checked ? this.$el.addClass('checked'): this.$el.removeClass('checked');
+        $(this._btnGroup).each(function(btn) {
+            var check = $('<span>').addClass('check');
+            var btn = $(this[btn]);
+            btn.prepend(check);
+        }.bind(this._btnGroup));
 
         this.$el.on('click', function(e) {
             var el = $(e.target);
-            var checked = false;
 
             if (!el.hasClass('checkbox')) {
                 el = el.parent();
@@ -29,21 +30,22 @@
 
             if (el.hasClass('checked')) {
                 el.removeClass('checked');
-                checked = false;
             } else {
                 el.addClass('checked');
-                checked = true;
             }
-
-            var data = {
-                type: el.attr('id'),
-                checked: checked
-            };
-
-            $(document).trigger('checkbox.change', data);
-
         }.bind(this));
-    };
+
+        var checkedItems = this.options.checked;
+
+        // if button group doesn't match the data spec, ignore
+        if (this._btnGroup.length < checkedItems.length) {
+            return;
+        }
+
+        for (var i=0; i<checkedItems.length; i++) {
+            $(this._btnGroup[checkedItems[i]]).addClass('checked');
+        }
+	};
 
 	$.fn[pluginName] = function (options) {
 		return this.each(function () {
